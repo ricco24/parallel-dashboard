@@ -118,27 +118,6 @@
             <h6 class="m-0 font-weight-bold text-primary">Records</h6>
         </div>
         <div class="card-body">
-{*            {control grid}*}
-
-            <div class="table-responsive">
-                <table class="table table-bordered table-striped">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Message</th>
-                            <th>Data</th>
-                            <th>Record ID</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    <tr n:foreach="$records as $record">
-                        <td>{$record['type']|taskTypeBadge}</td>
-                        <td style="font-size: 14px">{$record['message']}</td>
-                        <td style="font-size: 14px"><code>{$record['data']}</code></td>
-                        <td style="font-size: 14px">{$record['record_id']}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+            {control grid}
         </div>
     </div>

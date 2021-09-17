@@ -22,6 +22,6 @@ class TaskTypeBadgeHelper
             return Html::el('span', ['class' => 'badge badge-danger'])->setText($type);
         }
 
-        return Html::el('span', ['class' => 'badge badge-default'])->setText($type);
+        return Html::el('span', ['class' => 'badge badge-secondary'])->setText($type);
     }
 }
