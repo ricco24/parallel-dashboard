@@ -1,0 +1,51 @@
+<!-- Sidebar -->
+<ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
+
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center" href="{plink Homepage:default}">
+        <div class="sidebar-brand-icon rotate-n-15">
+            <i class="fas fa-database"></i>
+        </div>
+        <div class="sidebar-brand-text mx-3">Parallel <sup>dashboard</sup></div>
+    </a>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+
+    <!-- Nav Item - Dashboard -->
+    <li class="nav-item active">
+        <a class="nav-link" href="{plink Homepage:default}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Dashboard</span></a>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+
+    <!-- Heading -->
+    <div class="sidebar-heading">
+        Tasks
+    </div>
+
+    <!-- Nav Item - Pages Collapse Menu -->
+    <li n:foreach="$tasks as $group => $groupData" class="nav-item">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#group-{$group}" aria-expanded="true" aria-controls="collapseTwo">
+            <i class="fas fa-fw fa-cog"></i>
+            <span>{$group} ({count($groupData['tasks'])})</span>
+        </a>
+        <div id="group-{$group}" n:class="collapse, isset($groupData['active']) ? show" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <a n:foreach="$groupData['tasks'] as $groupTask" n:class="collapse-item, $activeTaskId == $groupTask['id'] ? active" href="{plink Task:detail, $groupTask['id']}">{$groupTask['name']}</a>
+            </div>
+        </div>
+    </li>
+
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block">
+
+    <!-- Sidebar Toggler (Sidebar) -->
+    <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+    </div>
+</ul>
+<!-- End of Sidebar -->

@@ -1,0 +1,127 @@
+{block content}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Run time</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800"><span style="font-size: 14px">{$parallelStats['start_at']->format('d.m.y H:i:s')} - {$parallelStats['end_at']->format('d.m.y H:i:s')}</span></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Tasks stack</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{$doneTasksCount}/{$parallelStats['all_tasks_count']}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Duration</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">
+                                {if $parallelStats['end_at']}
+                                    {($parallelStats['end_at']->getTimestamp() - $parallelStats['start_at']->getTimestamp())|timeFormat}
+                                {else}
+                                    {((new Nette\Utils\DateTime())->getTimestamp() - $parallelStats['start_at']->getTimestamp())|timeFormat}
+                                {/if}
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-comments fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {var $progress = ceil(100 / $parallelStats['all_tasks_count'] * $doneTasksCount)}
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div n:class="card, shadow, h-100, py-2, $progress == 100 ? border-left-success : border-left-info">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div n:class="text-xs, font-weight-bold, text-uppercase, mb-1, $progress == 100 ? text-success : text-info">Progress
+                            </div>
+                            <div class="row no-gutters align-items-center">
+                                <div class="col-auto">
+                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">{$progress}%</div>
+                                </div>
+                                <div class="col">
+                                    <div class="progress progress-sm mr-2">
+                                        <div n:class="progress-bar, $progress == 100 ? bg-success : bg-info" role="progressbar" style="width: {$progress}%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Content Row -->
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Tasks</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-striped" >
+                        <thead>
+                        <tr>
+                            <th>Result</th>
+                            <th>Task</th>
+                            <th>Total</th>
+                            <th>Success</th>
+                            <th>Skip</th>
+                            <th>Error</th>
+                            <th>Duration</th>
+                            <th>End at</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr n:foreach="$tasks as $task">
+                            <td>{$task|taskResultBadge}</td>
+                            <td style="font-size: 14px"><a href="{link Task:detail, $task['id']}">{$task['name']}</a></td>
+                            <td style="font-size: 14px">{($task['skip_count'] + $task['error_count'] + $task['success_count'])|number}</td>
+                            <td style="font-size: 14px">{$task['success_count']|number}</td>
+                            <td style="font-size: 14px">{$task['skip_count']|number}</td>
+                            <td style="font-size: 14px">{$task['error_count']|number}</td>
+                            <td style="font-size: 14px">{$task['duration']|timeFormat}</td>
+                            <td style="font-size: 14px">{$task['end_at']->format('d.m.Y H:i:s')}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>

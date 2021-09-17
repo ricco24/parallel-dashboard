@@ -1,0 +1,7 @@
+parameters:
+
+
+database:
+	dsn: 'mysql:host=localhost;dbname=nova_tn_import_log'
+	user: root
+	password: '123'

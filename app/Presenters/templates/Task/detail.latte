@@ -1,0 +1,144 @@
+{varType Nette\Database\Table\ActiveRow $task}
+{varType array $groupedResultsByMessage}
+
+{block content}
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">{$task['name']}</h1>
+    </div>
+
+    <!-- Content Row -->
+    <div class="row">
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Run time</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800"><span style="font-size: 14px">{$task['start_at']->format('d.m.y H:i:s')} - {$task['end_at']->format('d.m.y H:i:s')}</span></div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Duration</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{$task['duration']|timeFormat}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-stopwatch fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Memory peak</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{$task['memory_peak']|bytes}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chart-bar fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Result</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{$task|taskResultBadge}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-flag-checkered fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Grouped results by message</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table table-bordered table-stripped">
+                        <thead>
+                            <tr>
+                                <th>Message</th>
+                                <th>Type</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr n:foreach="$groupedResultsByMessage as $groupedResultByMessage">
+                                <td style="font-size: 14px">{$groupedResultByMessage['message']}</td>
+                                <td>{$groupedResultByMessage['type']|taskTypeBadge}</td>
+                                <td style="font-size: 14px">{$groupedResultByMessage['cnt']|number}</td>
+                                <td style="font-size: 14px">~{(100 / $allRecords * $groupedResultByMessage['cnt'])|number: 1}%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Types chart</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body">
+                    {control taskRecordTypeChart}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-12">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Records</h6>
+        </div>
+        <div class="card-body">
+{*            {control grid}*}
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Message</th>
+                            <th>Data</th>
+                            <th>Record ID</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr n:foreach="$records as $record">
+                        <td>{$record['type']|taskTypeBadge}</td>
+                        <td style="font-size: 14px">{$record['message']}</td>
+                        <td style="font-size: 14px"><code>{$record['data']}</code></td>
+                        <td style="font-size: 14px">{$record['record_id']}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
