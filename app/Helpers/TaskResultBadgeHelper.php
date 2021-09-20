@@ -12,7 +12,7 @@ class TaskResultBadgeHelper
     public function process(ActiveRow $parallelTask): Html
     {
         if ($parallelTask['error_count']) {
-            return Html::el('span', ['class' => 'badge badge-success'])->setText('Error');
+            return Html::el('span', ['class' => 'badge badge-danger'])->setText('Error');
         }
 
         if ($parallelTask['success_count']) {
