@@ -7,21 +7,27 @@ namespace App\Presenters;
 use App\Components\TaskRecordTypeChart\TaskRecordTypeChart;
 use Nette\Application\BadRequestException;
 use Nette\Database\Table\Selection;
-use Nette\Utils\Strings;
 use Ublaboo\DataGrid\DataGrid;
 
 final class TaskPresenter extends BasePresenter
 {
-    public function actionDetail(int $id)
+    public function actionDetail(int $id, ?string $message = null, ?string $type = null): void
     {
         $task = $this->db->table('parallel_tasks')->get($id);
         if (!$task) {
-            return new BadRequestException();
+            throw new BadRequestException();
         }
 
         $this->getComponent('taskRecordTypeChart')->set($task['success_count'], $task['skip_count'], $task['error_count']);
         $this->getComponent('sidebar')->setActive($task['id']);
         $this->getComponent('grid')->setDataSource($this->db->table($task['table_name']));
+
+        /** @var DataGrid $grid */
+        $grid = $this->getComponent('grid');
+        $grid->setFilter([
+            'message' => $message,
+            'type' => $type
+        ]);
 
         $this->template->task = $task;
         $this->template->allRecords = $this->db->table($task['table_name'])->count('*');
@@ -33,10 +39,15 @@ final class TaskPresenter extends BasePresenter
         return new TaskRecordTypeChart($this->pageScripts);
     }
 
-    protected function createComponentGrid($name)
+    protected function createComponentGrid($name): DataGrid
     {
         $grid = new DataGrid($this, $name);
-        $grid->setItemsPerPageList([50, 100]);
+        $grid->setOuterFilterRendering();
+        $grid->setAutoSubmit(false);
+        $grid->setStrictSessionFilterValues(false);
+        $grid->setRememberState(false);
+
+        $grid->setItemsPerPageList([25, 50, 100, 250]);
         $nowrap = [
             'style' => [
                 'white-space: nowrap',
@@ -75,7 +86,10 @@ final class TaskPresenter extends BasePresenter
             'skip' => 'skip',
             'error' => 'error'
         ]);
-        $grid->addFilterText('message', 'Message');
+        $grid->addFilterText('message', 'Message')
+            ->setCondition(function(Selection $fluent, $value) {
+                $fluent->where('message', $value);
+            });
         $grid->addFilterText('data', 'Data')
             ->setCondition(function(Selection $fluent, $value) {
                 $exploded = explode(':', $value);
@@ -96,12 +110,15 @@ final class TaskPresenter extends BasePresenter
                     }
                 }
 
-                if (!ctype_digit($value)) {
+                if (in_array($value, ['false', 'FALSE', 'true', 'TRUE'])) {
+                    $value = $value ? 'TRUE' : 'FALSE';
+                } elseif (!ctype_digit($value)) {
                     $value = "'" . $value . "'";
                 }
 
                 $fluent->where('JSON_EXTRACT(data, "$.' . $column . '") ' . $sign . ' '. $value);
             });
         $grid->addFilterText('record_id', 'Record ID');
+        return $grid;
     }
 }

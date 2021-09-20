@@ -89,7 +89,7 @@
                         </thead>
                         <tbody>
                             <tr n:foreach="$groupedResultsByMessage as $groupedResultByMessage">
-                                <td style="font-size: 14px">{$groupedResultByMessage['message']}</td>
+                                <td style="font-size: 14px"><a n:href="detail, $task['id'], $groupedResultByMessage['message']">{$groupedResultByMessage['message']}</td>
                                 <td>{$groupedResultByMessage['type']|taskTypeBadge}</td>
                                 <td style="font-size: 14px">{$groupedResultByMessage['cnt']|number}</td>
                                 <td style="font-size: 14px">~{(100 / $allRecords * $groupedResultByMessage['cnt'])|number: 1}%</td>
