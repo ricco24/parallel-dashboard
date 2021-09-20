@@ -11,7 +11,7 @@ use Ublaboo\DataGrid\DataGrid;
 
 final class TaskPresenter extends BasePresenter
 {
-    public function actionDetail(int $id, ?string $message = null, ?string $type = null): void
+    public function actionDetail(int $id, ?string $message = null): void
     {
         $task = $this->db->table('parallel_tasks')->get($id);
         if (!$task) {
@@ -22,12 +22,14 @@ final class TaskPresenter extends BasePresenter
         $this->getComponent('sidebar')->setActive($task['id']);
         $this->getComponent('grid')->setDataSource($this->db->table($task['table_name']));
 
-        /** @var DataGrid $grid */
-        $grid = $this->getComponent('grid');
-        $grid->setFilter([
-            'message' => $message,
-            'type' => $type
-        ]);
+        if ($message) {
+            $this->redirect('this', [
+                'message' => null,
+                'grid-filter' => [
+                    'message' => $message
+                ]
+            ]);
+        }
 
         $this->template->task = $task;
         $this->template->allRecords = $this->db->table($task['table_name'])->count('*');
